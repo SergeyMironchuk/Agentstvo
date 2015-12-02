@@ -1,0 +1,181 @@
+﻿@model IList<Agentstvo.WebUI.Models.DomainModel.ObjectForSale>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="navbar navbar-fixed-top navBarBackgroung">
+    <div class="container container-ext" style="position: relative;">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="~/Content/images/Logotip3.png"/></a>
+        </div>
+        <div class="input-group" style="width: 400px; margin-bottom: 1em; position: absolute; top: 5px; right: 0;">
+            <input type="text" class="form-control" placeholder="Search">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron titleBar">
+<div class="container text-center container-ext" id="TitleBar">
+    <img src="~/Content/images/House8.png"/>
+    <div id="TitleText">
+        <h1>Our Main Slogan</h1>
+    </div>
+    <div id="Coordinats">
+        Chernogoria<br />
+        Sv.Stefan<br />
+        050-5677135<br />
+        050-1235798
+    </div>
+</div>
+</div>
+
+<div class="container container-ext">
+    <div style="width: 1002px; margin-right: auto; margin-left: auto;">
+        <div id="galery">
+            <div id="placeholder">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <img class="MainImage" id="home@(i)" width="750" height="500" @Html.Raw(i > 0 ? "style='display: none'" : "") 
+                         src='@Url.Action("Image", new {id = Model[i].Id, imageFile = Model[i].ImageLocation, width = 750, height = 500})' />
+                }
+            </div>
+            <ul id="homes">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <li>
+                        <a id="thumb@(i+1)" data-index="@(i)" href="#" 
+                           style="background: url('@Url.Action("Image", new {imageFile = Model[i].ImageLocation, width = 248, height = 165})') no-repeat left top;">
+                            <span>Home @(i + 1)</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <ul class="pager">
+            <li><a href="#">Previous</a></li>
+            <li><a href="#">Next</a></li>
+        </ul>
+    </div>
+</div>
+<div id="window" style="visibility: hidden;">
+    <div id="wrap" class="first-page">
+        <ul id="book">
+            @for (int i = Model.Count-1; i >= 0; i--)
+            {
+                <li @Html.Raw(i == 0 ? "class='current'" : "")>
+                    <img src='@Url.Action("Image", new {imageFile = Model[i].ImageLocation, width = 820, height = 546})'
+                              alt="Page @(i+1)" width="820" height="546"/>
+                </li>
+            }
+        </ul>
+
+        <a href="#" id="previous">Previous page</a>
+        <a href="#" id="next">Next page</a>
+        <span class="k-icon k-i-close" id="closeButton"></span>
+    </div>
+</div>
+<script type="text/javascript">
+    totalBookPages = 3;
+    $(function () {
+        var index = 0,
+            currentEffect;
+
+        $("#homes a").click(function (e) {
+            e.preventDefault();
+            var target = parseInt($(this).data("index"));
+            if (target === index) {
+                return;
+            }
+
+            if (currentEffect) {
+                currentEffect.stop();
+            }
+            $("#home" + target).show();
+            currentEffect = kendo.fx("#home" + target).replace("#home" + index, "swap");
+            currentEffect.run();
+            index = target;
+        });
+
+        var getEffects = function () {
+            return (("expand:vertical ") + ("fadeIn"));
+        };
+
+        function initWindow() {
+            var windowOptions = {
+                width: "1020px",
+                height: "650px",
+                title: false,
+                visible: false,
+                modal: true
+            };
+
+            //windowOptions.animation = { open: { effects: getEffects() }, close: { effects: getEffects(), reverse: true } };
+
+            $("#window").kendoWindow(windowOptions);
+
+            $(".MainImage")
+                .bind("click", function () {
+                    $("#window").data("kendoWindow").center().open();
+                });
+        }
+
+        initWindow();
+
+        function currentPage(page) {
+            var book = $("#book"),
+                pages = book.children(),
+                pagesCount = pages.length,
+                current = pages.filter(".current"),
+                currentIndex = pagesCount - current.index(),
+                newPage;
+
+            if (!arguments.length) {
+                return currentIndex;
+            }
+
+            if (book.data("animating")) {
+                return 0;
+            }
+
+            $("#wrap").toggleClass("first-page", page === 1)
+                .toggleClass("last-page", page === pagesCount);
+
+            if (page !== currentIndex) {
+                current.removeClass("current");
+                newPage = pages.eq(pagesCount - page).addClass("current");
+
+                if (page > currentIndex) {
+                    kendo.fx(book).pageturnHorizontal(current, newPage).play();
+                } else {
+                    kendo.fx(book).pageturnHorizontal(newPage, current).reverse();
+                }
+            }
+            return 0;
+        }
+
+        $("#previous").click(function (e) {
+            e.preventDefault();
+            currentPage(Math.max(1, currentPage() - 1));
+        });
+
+        $("#next").click(function (e) {
+            e.preventDefault();
+            currentPage(Math.min(totalBookPages, currentPage() + 1));
+        });
+
+        $("#closeButton").click(function () {
+            $("#window").data("kendoWindow").close();
+            currentPage(1);
+        });
+
+    });
+
+</script>
