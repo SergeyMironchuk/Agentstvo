@@ -44,6 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlRenderer, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.Core.1.5.0.6\lib\net45\HtmlRenderer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HtmlRenderer.WinForms, Version=1.5.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlRenderer.WinForms.1.5.0.6\lib\net45\HtmlRenderer.WinForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -58,6 +66,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -171,6 +180,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Catalog\Object01\Main.txt" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -196,6 +206,24 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Catalog\Object01\DSC-0095.JPG" />
+    <Content Include="App_Data\Catalog\Object01\Main.JPG" />
+    <Content Include="App_Data\Catalog\Object02\9020938-01.jpg" />
+    <Content Include="App_Data\Catalog\Object02\e1e7cb4-03.jpg" />
+    <Content Include="App_Data\Catalog\Object02\Main.jpg" />
+    <Content Include="App_Data\Catalog\Object02\Main.txt" />
+    <Content Include="App_Data\Catalog\Object03\2013-06-24 15.00.16.jpg" />
+    <Content Include="App_Data\Catalog\Object03\2013-06-25 10.51.35.jpg" />
+    <Content Include="App_Data\Catalog\Object03\Main.jpg" />
+    <Content Include="App_Data\Catalog\Object03\Main.txt" />
+    <Content Include="App_Data\Catalog\Object04\9020938-01.jpg" />
+    <Content Include="App_Data\Catalog\Object04\e1e7cb4-03.jpg" />
+    <Content Include="App_Data\Catalog\Object04\Main.jpg" />
+    <Content Include="App_Data\Catalog\Object05\2013-06-24 15.00.16.jpg" />
+    <Content Include="App_Data\Catalog\Object05\2013-06-25 10.51.35.jpg" />
+    <Content Include="App_Data\Catalog\Object05\Main.jpg" />
+    <Content Include="App_Data\Catalog\Object06\DSC-0095.JPG" />
+    <Content Include="App_Data\Catalog\Object06\Main.JPG" />
     <Content Include="Content\bootstrap\css\bootstrap-theme.css" />
     <Content Include="Content\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap\css\bootstrap.css" />
@@ -1210,9 +1238,7 @@
     <Content Include="Scripts\kendo\2015.3.1111\kendo.angular.min.js.map" />
     <Content Include="Scripts\kendo\2015.3.1111\jquery.min.map" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />

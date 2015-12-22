@@ -1,135 +1,201 @@
-﻿@model IList<Agentstvo.WebUI.Models.DomainModel.ObjectForSale>
-@{
-    ViewData["Title"] = "Home Page";
-}
-<div class="navbar navbar-fixed-top navBarBackgroung">
-    <div class="container container-ext" style="position: relative;">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="~/Content/images/Logotip3.png"/></a>
-        </div>
-        <div class="input-group" style="width: 400px; margin-bottom: 1em; position: absolute; top: 5px; right: 0;">
-            <input type="text" class="form-control" placeholder="Search">
-            <div class="input-group-btn">
-                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+﻿@model string
+
+<div id="page" ng-controller="MainController" style="width: 100%;">
+    <div class="navbar navbar-fixed-top navBarBackgroung">
+        <div class="container container-ext" style="position: relative;">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="~/Content/images/Logotip3.png"/></a>
+            </div>
+            <div class="input-group" style="width: 400px; margin-bottom: 1em; position: absolute; top: 5px; right: 0;">
+                <input type="text" class="form-control" placeholder="Search">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="jumbotron titleBar">
-<div class="container text-center container-ext" id="TitleBar">
-    <img src="~/Content/images/House8.png"/>
-    <div id="TitleText">
-        <h1>Our Main Slogan</h1>
-    </div>
-    <div id="Coordinats">
-        Chernogoria<br />
-        Sv.Stefan<br />
-        050-5677135<br />
-        050-1235798
-    </div>
-</div>
-</div>
-
-<div class="container container-ext">
-    <div style="width: 1002px; margin-right: auto; margin-left: auto;">
-        <div id="galery">
-            <div id="placeholder">
-                @for (int i = 0; i < Model.Count; i++)
-                {
-                    <img class="MainImage" id="home@(i)" width="750" height="500" @Html.Raw(i > 0 ? "style='display: none'" : "") 
-                         src='@Url.Action("Image", new {id = Model[i].Id, imageFile = Model[i].ImageLocation, width = 750, height = 500})' />
-                }
+    <div class="jumbotron titleBar" ng-click="ScrollTo()" style="cursor: pointer;">
+        <div class="container text-center container-ext" id="TitleBar">
+            <img src="~/Content/images/House8.png"/>
+            <div id="TitleText">
+                <h1>Our Main Slogan</h1>
             </div>
-            <ul id="homes">
-                @for (int i = 0; i < Model.Count; i++)
-                {
-                    <li>
-                        <a id="thumb@(i+1)" data-index="@(i)" href="#" 
-                           style="background: url('@Url.Action("Image", new {imageFile = Model[i].ImageLocation, width = 248, height = 165})') no-repeat left top;">
-                            <span>Home @(i + 1)</span>
+            <div id="Coordinats">
+                Chernogoria<br/>
+                Sv.Stefan<br/>
+                050-5677135<br/>
+                050-1235798
+            </div>
+        </div>
+    </div>
+
+    @* ReSharper disable Asp.Entity *@
+    <div class="container container-ext">
+        <div style="width: 1002px; margin-right: auto; margin-left: auto;">
+            <div id="galery">
+                <div id="placeholder">
+                    <img ng-repeat="objectForSale in objectsList" ng-click="OpenBook()" class="MainImage" id="home{{ objectForSale.No }}" width="750" height="500" ng-show="objectForSale.Show"
+                         ng-src="@(Url.Action("Image"))?id={{ objectForSale.Id }}&imageFile={{ objectForSale.ImageLocation }}&width=750&height=500"/>
+                </div>
+                <ul id="homes">
+                    <li ng-repeat="objectForSale in objectsList">
+                        <a id="thumb{{ objectForSale.No }}" ng-click="SelectHome(objectForSale.No)"  data-index="{{ objectForSale.No }}" href=""
+                           ng-style="{'background': 'url(@(Url.Action("Image"))?width=248&height=165&imageFile={{ objectForSale.ImageLocation }}) no-repeat left top'}">
+                            <span>Home {{ objectForSale.Id }}</span>
                         </a>
                     </li>
-                }
+                </ul>
+            </div>
+            <ul class="pager">
+                <li><a href="" ng-disabled="curentPage == 1" ng-click="PrevPage()" >Previous</a></li>
+                <li><a href="" ng-disabled="curentPage * 3 >= total" ng-click="NextPage()" >Next</a></li>
             </ul>
         </div>
-        <ul class="pager">
-            <li><a href="#">Previous</a></li>
-            <li><a href="#">Next</a></li>
-        </ul>
     </div>
-</div>
-<div id="window" style="visibility: hidden;">
-    <div id="wrap" class="first-page">
-        <ul id="book">
-            @for (int i = Model.Count-1; i >= 0; i--)
-            {
-                <li @Html.Raw(i == 0 ? "class='current'" : "")>
-                    <img src='@Url.Action("Image", new {imageFile = Model[i].ImageLocation, width = 820, height = 546})'
-                              alt="Page @(i+1)" width="820" height="546"/>
+    <div kendo-window="bookWindow" k-visible="false" k-width="1020" k-height="650" k-title="false" k-scrollable="false">
+        <div id="wrap" class="first-page">
+            <ul id="book">
+                <li ng-repeat="image in currentImagesLocation" class="{{ image.CurrentClass }}">
+                    <img ng-src="@(Url.Action("Image"))?imageFile={{ image.ImageLocation }}&width=820&height=546" width="820" height="546"/>
                 </li>
-            }
-        </ul>
+            </ul>
 
-        <a href="#" id="previous">Previous page</a>
-        <a href="#" id="next">Next page</a>
-        <span class="k-icon k-i-close" id="closeButton"></span>
+            <a href="" id="previous" ng-click="previousPage()">Previous curentPage</a>
+            <a href="" id="next" ng-click="nextPage()">Next curentPage</a>
+            <span class="k-icon k-i-close" id="closeButton" ng-click="closeBook()"></span>
+        </div>
     </div>
 </div>
-<script type="text/javascript">
-    totalBookPages = 3;
-    $(function () {
-        var index = 0,
-            currentEffect;
 
-        $("#homes a").click(function (e) {
-            e.preventDefault();
-            var target = parseInt($(this).data("index"));
-            if (target === index) {
+@section scripts {
+<script type="text/javascript">
+    appModule.controller("MainController", function($scope, $http) {
+        //$scope.$on("kendoWidgetCreated", function (event, widget) {
+        //    //retrieve the child scope from the window element
+        //    //if (widget === $scope.bookWindow) {
+        //    //    var windowScope = angular.element($scope.bookWindow.element).scope();
+        //    //    console.log("All Kendo UI Widgets are rendered.");
+        //    //    windowScope.currentImagesLocation = $scope.objectsList[$scope.currentObject].ImagesLocation;
+        //    //    windowScope.currentImagesLocation[0].CurrentClass = "current";
+        //    //}
+        //});
+
+        $scope.ScrollTo = function() {
+            //window.scrollTo(0, 570);
+            $('html, body').animate({ scrollTop: 570 }, 500);
+        }
+
+        $scope.curentPage = 1;
+        $scope.currentImagesLocation = null;
+        $scope.currentObject = 0;
+        $scope.totalBookPages = 3;
+
+        $scope.PrevPage = function() {
+            if ($scope.curentPage > 1) {
+                $scope.curentPage = $scope.curentPage - 1;
+                $scope.GetObjects($scope.curentPage);
+            }
+        }
+
+        $scope.NextPage = function () {
+            if ($scope.curentPage * 3 < $scope.total) {
+                $scope.curentPage = $scope.curentPage + 1;
+                $scope.GetObjects($scope.curentPage);
+            }
+        }
+
+        $scope.GetObjects = function(page) {
+            $http.post('@Url.Action("ObjectsList", "Home")?page=' + page).
+                success(function (data) {
+                    $scope.objectsList = data.data;
+                    $scope.totalBookPages = 0;
+                    for (var i = 0; i < $scope.objectsList.length; i++) {
+                        $scope.totalBookPages += 1;
+                        $scope.objectsList[i].No = i;
+                    }
+                    $scope.total = data.total;
+                    $scope.objectsList[0].Show = 1;
+                    $scope.ChangeBook(0);
+                }).
+                error(function (result) {
+                    var errorMessage = $(result).closest("title").text();
+                    $scope.Notification.error("Ошибка при получении данных. Повторите запрос. Текст ошибки: " + errorMessage);
+                });
+        }
+        $scope.GetObjects(1);
+
+        $scope.ChangeBook = function(n) {
+            $scope.currentImagesLocation = $scope.objectsList[n].ImagesLocation;
+            $scope.totalBookPages = $scope.currentImagesLocation.length;
+            for (var i = 0; i < $scope.totalBookPages; i++) {
+                $scope.currentImagesLocation[i].CurrentClass = "";
+            }
+            $scope.currentImagesLocation[$scope.totalBookPages-1].CurrentClass = "current";
+            $scope.currentPage(1);
+        }
+
+        $scope.index = 0;
+        $scope.currentEffect = null;
+
+        $scope.SelectHome = function(target) {
+    
+            $scope.currentObject = target;
+            $scope.ChangeBook($scope.currentObject);
+
+            if (target === $scope.index) {
                 return;
             }
 
-            if (currentEffect) {
-                currentEffect.stop();
+            if ($scope.currentEffect) {
+                $scope.currentEffect.stop();
             }
-            $("#home" + target).show();
-            currentEffect = kendo.fx("#home" + target).replace("#home" + index, "swap");
-            currentEffect.run();
-            index = target;
-        });
-
-        var getEffects = function () {
-            return (("expand:vertical ") + ("fadeIn"));
-        };
-
-        function initWindow() {
-            var windowOptions = {
-                width: "1020px",
-                height: "650px",
-                title: false,
-                visible: false,
-                modal: true
-            };
-
-            //windowOptions.animation = { open: { effects: getEffects() }, close: { effects: getEffects(), reverse: true } };
-
-            $("#window").kendoWindow(windowOptions);
-
-            $(".MainImage")
-                .bind("click", function () {
-                    $("#window").data("kendoWindow").center().open();
-                });
+            var targetImage = $("#home" + target);
+            targetImage.show();
+            targetImage.removeClass("ng-hide");
+            $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
+            $scope.currentEffect.run();
+            $scope.index = target;
         }
 
-        initWindow();
+        //$("#homesss").on("click", "a", function (e) {
+        //    e.preventDefault();
+        //    var target = parseInt($(this).data("index"));
 
-        function currentPage(page) {
+        //    $scope.currentObject = target;
+        //    $scope.ChangeBook($scope.currentObject);
+        //    $scope.$apply();
+
+        //    if (target === $scope.index) {
+        //        return;
+        //    }
+
+        //    if ($scope.currentEffect) {
+        //        $scope.currentEffect.stop();
+        //    }
+        //    var targetImage = $("#home" + target);
+        //    targetImage.show();
+        //    targetImage.removeClass("ng-hide");
+        //    $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
+        //    $scope.currentEffect.run();
+        //    $scope.index = target;
+        //});
+
+        $scope.OpenBook = function() {
+            $scope.bookWindow.center().open();
+        }
+
+        //$("#placeholderrr").on("click", "img", function () {
+        //    $scope.bookWindow.center().open();
+        //});
+
+        $scope.currentPage = function (page) {
             var book = $("#book"),
                 pages = book.children(),
                 pagesCount = pages.length,
@@ -161,21 +227,32 @@
             return 0;
         }
 
-        $("#previous").click(function (e) {
-            e.preventDefault();
-            currentPage(Math.max(1, currentPage() - 1));
-        });
+        $scope.previousPage = function() {
+            $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
+        }
+        $scope.nextPage = function() {
+            $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
+        }
+        $scope.closeBook = function () {
+            $scope.bookWindow.close();
+            $scope.currentPage(1);
+        }
 
-        $("#next").click(function (e) {
-            e.preventDefault();
-            currentPage(Math.min(totalBookPages, currentPage() + 1));
-        });
+        //$("#previousss").click(function (e) {
+        //    e.preventDefault();
+        //    $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
+        //});
 
-        $("#closeButton").click(function () {
-            $("#window").data("kendoWindow").close();
-            currentPage(1);
-        });
+        //$("#nexttt").click(function (e) {
+        //    e.preventDefault();
+        //    $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
+        //});
 
+        //$("#closeButtonnn").click(function () {
+        //    $scope.bookWindow.close();
+        //    $scope.currentPage(1);
+        //});
     });
 
-</script>
+    </script>
+}

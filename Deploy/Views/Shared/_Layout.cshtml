@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Agentsvo.WebUI</title>
+
+        <link rel="stylesheet" href="~/Content/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/Content/kendo/2015.3.1111/kendo.common.min.css" />
+        <link rel="stylesheet" href="~/Content/kendo/2015.3.1111/kendo.default.min.css" />
+        <link rel="stylesheet" href="~/Content/site.css" />
+
+        @*<script src="http://kendo.cdn.telerik.com/2015.3.1111/js/jquery.min.js"></script>
+        <script src="http://kendo.cdn.telerik.com/2015.3.1111/js/angular.min.js"></script>
+        <script src="http://kendo.cdn.telerik.com/2015.3.1111/js/kendo.all.min.js"></script>*@
+
+        <script src="~/Scripts/kendo/2015.3.1111/jquery.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/angular.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.ui.core.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.angular.min.js"></script>
+
+        @*<script src="~/Scripts/kendo/2015.3.1111/kendo.core.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.webcomponents.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.fx.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.window.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.button.min.js"></script>
+        <script src="~/Scripts/kendo/2015.3.1111/kendo.notification.min.js"></script>
+        <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>*@
+    </head>
+<body ng-app="Agentstvo">
+@RenderBody()
+<div class="jumbotron text-center" style="height: 30px; background: #DBD4CE; padding-top: 10px;">
+    &copy; 2015 - Agentsvo.WebUI
+</div>
+<footer class="container text-center" style="height: 160px; vertical-align: top;">
+</footer>
+<span kendo-notification="notification" k-button="true" k-auto-hide-after="10000"></span>
+
+<script type="text/javascript">
+    appModule = angular.module("Agentstvo", ["kendo.directives"]);
+</script>
+
+@RenderSection("scripts", required: false)
+</body>
+</html>

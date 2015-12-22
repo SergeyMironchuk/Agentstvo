@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+using Microsoft.Owin.Security;
+using TheArtOfDev.HtmlRenderer.WinForms;
+
+// ReSharper disable CommentTypo
 
 namespace Agentstvo.WebUI.Models.DomainModel.Images
 {
@@ -71,7 +76,6 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
             return fromImage.AddBluredRect(destRect);
         }
 
-
         public static Bitmap AddBluredRect(this Bitmap fromImage, Rectangle destRect)
         {
             // Создаем полосу
@@ -96,6 +100,24 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
             return fromImage;
         }
 
+        public static Bitmap Clip10X15(this Bitmap fromImage)
+        {
+            Rectangle destRect;
+            if ((fromImage.Width - 1.5 * fromImage.Height) > 0)
+            {
+                var newWidth = (int)(1.5*fromImage.Height);
+                destRect = new Rectangle((int)(0.5 * (fromImage.Width - newWidth)), 0, newWidth, fromImage.Height);
+                return fromImage.Clone(destRect, PixelFormat.Undefined);
+            }
+            if ((fromImage.Width - 1.5*fromImage.Height) < 0)
+            {
+                var newHeight = fromImage.Width/1.5;
+                destRect = new Rectangle(0, (int)(0.5 * (fromImage.Height - newHeight)), fromImage.Width, (int) newHeight);
+                return fromImage.Clone(destRect, PixelFormat.Undefined);
+            }
+            return fromImage;
+        }
+
         /// <summary>
         /// Resize the image to the specified width and height.
         /// </summary>
@@ -103,7 +125,7 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Bitmap ResizeImage(this Image image, int width, int height)
+        public static Bitmap ResizeImage(this Bitmap image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
@@ -124,8 +146,20 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
             }
-
+            destImage.SetResolution(72.0F, 72.0F);
             return destImage;
+        }
+
+        public static Bitmap AddText(this Bitmap toImage, decimal bottomPercent, int pudding, string htmlText)
+        {
+            var html = $"<body style='font: 12pt Verdana'>{htmlText}</body>";
+
+            var destRect = new Rectangle(0, toImage.Height - (int)(toImage.Height * bottomPercent / 100), toImage.Width, (int)(toImage.Height * bottomPercent / 100));
+            Image image = HtmlRender.RenderToImageGdiPlus(html, new Size(destRect.Width, destRect.Height));
+            var graphics = Graphics.FromImage(toImage);
+            graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+
+            return toImage;
         }
     }
 }
