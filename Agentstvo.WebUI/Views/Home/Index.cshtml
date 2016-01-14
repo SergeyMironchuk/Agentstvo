@@ -13,9 +13,10 @@
                 <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="~/Content/images/Logotip3.png"/></a>
             </div>
             <div class="input-group" style="width: 400px; margin-bottom: 1em; position: absolute; top: 5px; right: 0;">
-                <input type="text" class="form-control" placeholder="Search">
+                <input type="text" ng-model="filter" class="form-control" placeholder="Search">
+                @*<input kendo-auto-complete="FilterInput" ng-model="filter" k-options="filterOptions" type="text" class="form-control"/>*@
                 <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    <button class="btn btn-default" ng-click="setFilter()"><i class="glyphicon glyphicon-search"></i></button>
                 </div>
             </div>
         </div>
@@ -43,6 +44,7 @@
                 <div id="placeholder">
                     <img ng-repeat="objectForSale in objectsList" ng-click="OpenBook()" class="MainImage" id="home{{ objectForSale.No }}" width="750" height="500" ng-show="objectForSale.Show"
                          ng-src="@(Url.Action("Image"))?id={{ objectForSale.Id }}&imageFile={{ objectForSale.ImageLocation }}&width=750&height=500"/>
+                    <img src="/Content/images/background3.png" style="top: 349px; left: -149px"/>
                 </div>
                 <ul id="homes">
                     <li ng-repeat="objectForSale in objectsList">
@@ -54,12 +56,12 @@
                 </ul>
             </div>
             <ul class="pager">
-                <li><a href="" ng-disabled="curentPage == 1" ng-click="PrevPage()" >Previous</a></li>
-                <li><a href="" ng-disabled="curentPage * 3 >= total" ng-click="NextPage()" >Next</a></li>
+                <li><a href="" ng-disabled="page == 1" ng-click="PrevPage()" >Previous</a></li>
+                <li><a href="" ng-disabled="page * 3 >= total" ng-click="NextPage()" >Next</a></li>
             </ul>
         </div>
     </div>
-    <div kendo-window="bookWindow" k-visible="false" k-width="1020" k-height="650" k-title="false" k-scrollable="false">
+    <div kendo-window="bookWindow" k-visible="false" k-width="1020" k-height="650" k-title="false" k-scrollable="false" class="BookWindow">
         <div id="wrap" class="first-page">
             <ul id="book">
                 <li ng-repeat="image in currentImagesLocation" class="{{ image.CurrentClass }}">
@@ -67,192 +69,215 @@
                 </li>
             </ul>
 
-            <a href="" id="previous" ng-click="previousPage()">Previous curentPage</a>
-            <a href="" id="next" ng-click="nextPage()">Next curentPage</a>
+            <a href="" id="previous" ng-click="previousPage()">Previous page</a>
+            <a href="" id="next" ng-click="nextPage()">Next page</a>
             <span class="k-icon k-i-close" id="closeButton" ng-click="closeBook()"></span>
         </div>
     </div>
 </div>
 
 @section scripts {
-<script type="text/javascript">
-    appModule.controller("MainController", function($scope, $http) {
-        //$scope.$on("kendoWidgetCreated", function (event, widget) {
-        //    //retrieve the child scope from the window element
-        //    //if (widget === $scope.bookWindow) {
-        //    //    var windowScope = angular.element($scope.bookWindow.element).scope();
-        //    //    console.log("All Kendo UI Widgets are rendered.");
-        //    //    windowScope.currentImagesLocation = $scope.objectsList[$scope.currentObject].ImagesLocation;
-        //    //    windowScope.currentImagesLocation[0].CurrentClass = "current";
-        //    //}
-        //});
+    <script type="text/javascript">
+        appModule.controller("MainController", function($scope, $http) {
+            //$scope.$on("kendoWidgetCreated", function (event, widget) {
+            //    //retrieve the child scope from the window element
+            //    //if (widget === $scope.bookWindow) {
+            //    //    var windowScope = angular.element($scope.bookWindow.element).scope();
+            //    //    console.log("All Kendo UI Widgets are rendered.");
+            //    //    windowScope.currentImagesLocation = $scope.objectsList[$scope.currentObject].ImagesLocation;
+            //    //    windowScope.currentImagesLocation[0].CurrentClass = "current";
+            //    //}
+            //});
 
-        $scope.ScrollTo = function() {
-            //window.scrollTo(0, 570);
-            $('html, body').animate({ scrollTop: 570 }, 500);
-        }
-
-        $scope.curentPage = 1;
-        $scope.currentImagesLocation = null;
-        $scope.currentObject = 0;
-        $scope.totalBookPages = 3;
-
-        $scope.PrevPage = function() {
-            if ($scope.curentPage > 1) {
-                $scope.curentPage = $scope.curentPage - 1;
-                $scope.GetObjects($scope.curentPage);
+            $scope.filter = "";
+            $scope.setFilter = function() {
+                $scope.page = 1;
+                $scope.GetObjects();
+                $scope.ScrollTo();
             }
-        }
 
-        $scope.NextPage = function () {
-            if ($scope.curentPage * 3 < $scope.total) {
-                $scope.curentPage = $scope.curentPage + 1;
-                $scope.GetObjects($scope.curentPage);
+            $scope.ScrollTo = function() {
+                //window.scrollTo(0, 570);
+                $('html, body').animate({ scrollTop: 630 }, 500);
             }
-        }
 
-        $scope.GetObjects = function(page) {
-            $http.post('@Url.Action("ObjectsList", "Home")?page=' + page).
-                success(function (data) {
-                    $scope.objectsList = data.data;
-                    $scope.totalBookPages = 0;
-                    for (var i = 0; i < $scope.objectsList.length; i++) {
-                        $scope.totalBookPages += 1;
-                        $scope.objectsList[i].No = i;
+            $scope.page = 1;
+            $scope.currentImagesLocation = null;
+            $scope.currentObject = 0;
+            $scope.totalBookPages = 3;
+
+            $scope.PrevPage = function() {
+                if ($scope.page > 1) {
+                    $scope.page = $scope.page - 1;
+                    $scope.GetObjects();
+                }
+            }
+
+            $scope.NextPage = function() {
+                if ($scope.page * 3 < $scope.total) {
+                    $scope.page = $scope.page + 1;
+                    $scope.GetObjects();
+                }
+            }
+
+            @*$scope.filterOptions = {
+                dataTextField: "Description",
+                filter: "contains",
+                minLength: 1,
+                dataSource: {
+                    serverFiltering: true,
+                    transport: {
+                        read: {
+                            url: '@Url.Action("ObjectsListWithFilter", "Home")',
+                            type: "POST",
+                            dataType: "json"
+                        }
                     }
-                    $scope.total = data.total;
-                    $scope.objectsList[0].Show = 1;
-                    $scope.ChangeBook(0);
-                }).
-                error(function (result) {
-                    var errorMessage = $(result).closest("title").text();
-                    $scope.Notification.error("Ошибка при получении данных. Повторите запрос. Текст ошибки: " + errorMessage);
-                });
-        }
-        $scope.GetObjects(1);
+                }
+            }*@
 
-        $scope.ChangeBook = function(n) {
-            $scope.currentImagesLocation = $scope.objectsList[n].ImagesLocation;
-            $scope.totalBookPages = $scope.currentImagesLocation.length;
-            for (var i = 0; i < $scope.totalBookPages; i++) {
-                $scope.currentImagesLocation[i].CurrentClass = "";
+            $scope.GetObjects = function() {
+                $http.post('@Url.Action("ObjectsListOnPage", "Home")?page=' + $scope.page + '&filter=' + $scope.filter).
+                    success(function(data) {
+                        $scope.objectsList = data.data;
+                        $scope.totalBookPages = 0;
+                        for (var i = 0; i < $scope.objectsList.length; i++) {
+                            $scope.totalBookPages += 1;
+                            $scope.objectsList[i].No = i;
+                        }
+                        $scope.total = data.total;
+                        $scope.objectsList[0].Show = 1;
+                        $scope.ChangeBook(0);
+                    }).
+                    error(function(result) {
+                        var errorMessage = $(result).closest("title").text();
+                        $scope.Notification.error("Ошибка при получении данных. Повторите запрос. Текст ошибки: " + errorMessage);
+                    });
             }
-            $scope.currentImagesLocation[$scope.totalBookPages-1].CurrentClass = "current";
-            $scope.currentPage(1);
-        }
+            $scope.GetObjects();
 
-        $scope.index = 0;
-        $scope.currentEffect = null;
-
-        $scope.SelectHome = function(target) {
-    
-            $scope.currentObject = target;
-            $scope.ChangeBook($scope.currentObject);
-
-            if (target === $scope.index) {
-                return;
-            }
-
-            if ($scope.currentEffect) {
-                $scope.currentEffect.stop();
-            }
-            var targetImage = $("#home" + target);
-            targetImage.show();
-            targetImage.removeClass("ng-hide");
-            $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
-            $scope.currentEffect.run();
-            $scope.index = target;
-        }
-
-        //$("#homesss").on("click", "a", function (e) {
-        //    e.preventDefault();
-        //    var target = parseInt($(this).data("index"));
-
-        //    $scope.currentObject = target;
-        //    $scope.ChangeBook($scope.currentObject);
-        //    $scope.$apply();
-
-        //    if (target === $scope.index) {
-        //        return;
-        //    }
-
-        //    if ($scope.currentEffect) {
-        //        $scope.currentEffect.stop();
-        //    }
-        //    var targetImage = $("#home" + target);
-        //    targetImage.show();
-        //    targetImage.removeClass("ng-hide");
-        //    $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
-        //    $scope.currentEffect.run();
-        //    $scope.index = target;
-        //});
-
-        $scope.OpenBook = function() {
-            $scope.bookWindow.center().open();
-        }
-
-        //$("#placeholderrr").on("click", "img", function () {
-        //    $scope.bookWindow.center().open();
-        //});
-
-        $scope.currentPage = function (page) {
-            var book = $("#book"),
-                pages = book.children(),
-                pagesCount = pages.length,
-                current = pages.filter(".current"),
-                currentIndex = pagesCount - current.index(),
-                newPage;
-
-            if (!arguments.length) {
-                return currentIndex;
+            $scope.ChangeBook = function(n) {
+                $scope.currentImagesLocation = $scope.objectsList[n].ImagesLocation;
+                $scope.totalBookPages = $scope.currentImagesLocation.length;
+                for (var i = 0; i < $scope.totalBookPages; i++) {
+                    $scope.currentImagesLocation[i].CurrentClass = "";
+                }
+                $scope.currentImagesLocation[$scope.totalBookPages - 1].CurrentClass = "current";
+                $scope.currentPage(1);
             }
 
-            if (book.data("animating")) {
+            $scope.index = 0;
+            $scope.currentEffect = null;
+
+            $scope.SelectHome = function(target) {
+
+                $scope.currentObject = target;
+                $scope.ChangeBook($scope.currentObject);
+
+                if (target === $scope.index) {
+                    return;
+                }
+
+                if ($scope.currentEffect) {
+                    $scope.currentEffect.stop();
+                }
+                var targetImage = $("#home" + target);
+                targetImage.show();
+                targetImage.removeClass("ng-hide");
+                $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
+                $scope.currentEffect.run();
+                $scope.index = target;
+            }
+
+            //$("#homesss").on("click", "a", function (e) {
+            //    e.preventDefault();
+            //    var target = parseInt($(this).data("index"));
+
+            //    $scope.currentObject = target;
+            //    $scope.ChangeBook($scope.currentObject);
+            //    $scope.$apply();
+
+            //    if (target === $scope.index) {
+            //        return;
+            //    }
+
+            //    if ($scope.currentEffect) {
+            //        $scope.currentEffect.stop();
+            //    }
+            //    var targetImage = $("#home" + target);
+            //    targetImage.show();
+            //    targetImage.removeClass("ng-hide");
+            //    $scope.currentEffect = kendo.fx("#home" + target).replace("#home" + $scope.index, "swap");
+            //    $scope.currentEffect.run();
+            //    $scope.index = target;
+            //});
+
+            $scope.OpenBook = function() {
+                $scope.bookWindow.center().open();
+            }
+
+            //$("#placeholderrr").on("click", "img", function () {
+            //    $scope.bookWindow.center().open();
+            //});
+
+            $scope.currentPage = function(page) {
+                var book = $("#book"),
+                    pages = book.children(),
+                    pagesCount = pages.length,
+                    current = pages.filter(".current"),
+                    currentIndex = pagesCount - current.index(),
+                    newPage;
+
+                if (!arguments.length) {
+                    return currentIndex;
+                }
+
+                if (book.data("animating")) {
+                    return 0;
+                }
+
+                $("#wrap").toggleClass("first-page", page === 1)
+                    .toggleClass("last-page", page === pagesCount);
+
+                if (page !== currentIndex) {
+                    current.removeClass("current");
+                    newPage = pages.eq(pagesCount - page).addClass("current");
+
+                    if (page > currentIndex) {
+                        kendo.fx(book).pageturnHorizontal(current, newPage).play();
+                    } else {
+                        kendo.fx(book).pageturnHorizontal(newPage, current).reverse();
+                    }
+                }
                 return 0;
             }
 
-            $("#wrap").toggleClass("first-page", page === 1)
-                .toggleClass("last-page", page === pagesCount);
-
-            if (page !== currentIndex) {
-                current.removeClass("current");
-                newPage = pages.eq(pagesCount - page).addClass("current");
-
-                if (page > currentIndex) {
-                    kendo.fx(book).pageturnHorizontal(current, newPage).play();
-                } else {
-                    kendo.fx(book).pageturnHorizontal(newPage, current).reverse();
-                }
+            $scope.previousPage = function() {
+                $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
             }
-            return 0;
-        }
+            $scope.nextPage = function() {
+                $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
+            }
+            $scope.closeBook = function() {
+                $scope.bookWindow.close();
+                $scope.currentPage(1);
+            }
 
-        $scope.previousPage = function() {
-            $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
-        }
-        $scope.nextPage = function() {
-            $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
-        }
-        $scope.closeBook = function () {
-            $scope.bookWindow.close();
-            $scope.currentPage(1);
-        }
+            //$("#previousss").click(function (e) {
+            //    e.preventDefault();
+            //    $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
+            //});
 
-        //$("#previousss").click(function (e) {
-        //    e.preventDefault();
-        //    $scope.currentPage(Math.max(1, $scope.currentPage() - 1));
-        //});
+            //$("#nexttt").click(function (e) {
+            //    e.preventDefault();
+            //    $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
+            //});
 
-        //$("#nexttt").click(function (e) {
-        //    e.preventDefault();
-        //    $scope.currentPage(Math.min($scope.totalBookPages, $scope.currentPage() + 1));
-        //});
-
-        //$("#closeButtonnn").click(function () {
-        //    $scope.bookWindow.close();
-        //    $scope.currentPage(1);
-        //});
-    });
+            //$("#closeButtonnn").click(function () {
+            //    $scope.bookWindow.close();
+            //    $scope.currentPage(1);
+            //});
+        });
 
     </script>
 }

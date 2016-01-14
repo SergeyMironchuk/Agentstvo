@@ -100,9 +100,17 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
             return fromImage;
         }
 
+        public static Bitmap AddBackBitmap(this Bitmap fromImage, Bitmap backImage)
+        {
+            var graphics = Graphics.FromImage(fromImage);
+            graphics.DrawImage(backImage, new Rectangle(0, fromImage.Height - backImage.Height, backImage.Width, backImage.Height));
+            return fromImage;
+        }
+
         public static Bitmap Clip10X15(this Bitmap fromImage)
         {
             Rectangle destRect;
+            fromImage.SetResolution(72.0F, 72.0F);
             if ((fromImage.Width - 1.5 * fromImage.Height) > 0)
             {
                 var newWidth = (int)(1.5*fromImage.Height);
@@ -130,7 +138,8 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
 
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            destImage.SetResolution(72.0F, 72.0F);
+            //destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
             using (var graphics = Graphics.FromImage(destImage))
             {
@@ -146,7 +155,7 @@ namespace Agentstvo.WebUI.Models.DomainModel.Images
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
             }
-            destImage.SetResolution(72.0F, 72.0F);
+            //destImage.SetResolution(72.0F, 72.0F);
             return destImage;
         }
 

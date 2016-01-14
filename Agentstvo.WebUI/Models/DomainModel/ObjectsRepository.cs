@@ -64,6 +64,7 @@ namespace Agentstvo.WebUI.Models.DomainModel
                                 })
                                 .ToArray())
                         };
+                        objectForSale.Description = objectForSale.SetDescription();
                         result.Add(objectForSale);
                     }
                 }
@@ -84,8 +85,14 @@ namespace Agentstvo.WebUI.Models.DomainModel
 
         public static string GetObjectDescription(int id)
         {
-            var result = "";
             var objectForSale = ObjectForSales.FirstOrDefault(o => o.Id == id);
+            var result = SetDescription(objectForSale);
+            return result;
+        }
+
+        private static string SetDescription(this ObjectForSale objectForSale)
+        {
+            string result = "";
             if (objectForSale != null)
             {
                 if (string.IsNullOrEmpty(objectForSale.Description))
@@ -96,7 +103,7 @@ namespace Agentstvo.WebUI.Models.DomainModel
                     var descriptionFile = objectPath + @"\" + mainFile + ".txt";
                     if (File.Exists(descriptionFile))
                     {
-                        objectForSale.Description = File.ReadAllText(descriptionFile); 
+                        objectForSale.Description = File.ReadAllText(descriptionFile);
                     }
                 }
                 result = objectForSale.Description;

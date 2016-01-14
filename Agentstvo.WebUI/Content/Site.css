@@ -5,11 +5,12 @@
 
 body {
 	overflow-x: hidden;
-    background-color: #EEECEA;
+    background: url('images/background1.png') center 701px no-repeat, url('images/background0.png') center 1050px no-repeat, url('images/bg_main_decor.jpg');
+    /*background-color: #EEECEA;*/
 }
 
 .titleBar {
-    background: url('images/bg_main_decor.jpg');
+    background: url('images/background.jpg') center center;
     border-bottom: solid 2px #bdbbbc;
 }
 
@@ -34,6 +35,13 @@ body {
 }
 
 /* Галлерея */
+div#galery {
+    box-shadow: 5px 5px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 6px rgba(0, 0, 0, 0.19);
+    height: 500px;
+    /*background: url('images/bg_main_decor.jpg') ;*/
+    /*background: url('images/background3.png') -149px 349px no-repeat;*/
+}
+
 #placeholder {
     display: inline-block;
     width: 750px;
@@ -120,6 +128,11 @@ body {
 }
 
 /* Книга */
+.k-window-content {
+    background-color: white;
+    background-image: url('images/bg_main_decor.jpg');
+}
+
 #wrap {
     width: 820px;
     height: 546px;

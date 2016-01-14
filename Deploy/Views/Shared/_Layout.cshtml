@@ -1,9 +1,13 @@
 ﻿<!DOCTYPE html>
+@{
+    const string title = "Agentsvo.WebUI";
+    const string slogan = "Our Main Slogan";
+}
 <html>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Agentsvo.WebUI</title>
+        <title>@title</title>
 
         <link rel="stylesheet" href="~/Content/bootstrap/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/Content/kendo/2015.3.1111/kendo.common.min.css" />
@@ -28,18 +32,66 @@
         <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>*@
     </head>
 <body ng-app="Agentstvo">
+<div id="fb-root"></div>
+<script>
+    (function (d, s, id) {
+        var fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        var js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v2.5";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+<script>
+    window.twttr = (function(d, s, id) {
+        var fjs = d.getElementsByTagName(s)[0],
+            t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        var js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function(f) {
+            t._e.push(f);
+        };
+
+        return t;
+    }(document, "script", "twitter-wjs"));
+</script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
 @RenderBody()
-<div class="jumbotron text-center" style="height: 30px; background: #DBD4CE; padding-top: 10px;">
-    &copy; 2015 - Agentsvo.WebUI
+<div class="jumbotron text-center" style="height: 30px; background: #DBD4CE; padding-top: 10px; margin-bottom: 10px;">
+    &copy; @(DateTime.Now.Year) - @title
 </div>
-<footer class="container text-center" style="height: 160px; vertical-align: top;">
+<footer class="container text-center" style="height: 250px; vertical-align: top; text-align: center;">
+    <table style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <td style="padding: 5px 5px 0 0;">
+                <a class="twitter-share-button"
+                   href="https://twitter.com/intent/tweet?text=@(slogan)">
+                    Tweet
+                </a>
+            </td>
+            <td style="padding-right: 5px;">
+                <div class="fb-share-button" data-href="http://agent.mironchuk.in.ua" data-layout="button"></div>
+            </td>
+            <td style="padding-top: 8px;">
+                <div class="g-plusone" data-size="tall" data-annotation="none" data-recommendations="false" data-href="http://agent.mironchuk.in.ua"></div>
+            </td>
+        </tr>
+    </table>
 </footer>
 <span kendo-notification="notification" k-button="true" k-auto-hide-after="10000"></span>
-
 <script type="text/javascript">
     appModule = angular.module("Agentstvo", ["kendo.directives"]);
 </script>
 
 @RenderSection("scripts", required: false)
+<script type="text/javascript">
+    //$('html, body').animate({ scrollTop: $("#page").offset().top }, -200);
+</script>
 </body>
 </html>

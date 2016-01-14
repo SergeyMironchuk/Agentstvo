@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -54,6 +55,8 @@ namespace Agentstvo.WebUI.Controllers
                 {
                     image = image.AddText(30, 0, htmlText);
                 }
+                //var backImage = new Bitmap(Server.MapPath("~\\Content\\images\\keyend.png"));
+                //image = image.AddBackBitmap(backImage);
             }
             image.Save(memoryStream, ImageFormat.Jpeg);
             memoryStream.Seek(0, SeekOrigin.Begin);
@@ -61,16 +64,27 @@ namespace Agentstvo.WebUI.Controllers
         }
 
         [HttpPost]
-        public ActionResult ObjectsList(int? page)
+        public ActionResult ObjectsListOnPage(int? page, string filter)
         {
             page = page ?? 1;
             _pageSize = 3;
+            var objectForSales = ObjectsRepository.ObjectForSales
+                .Where(o => string.IsNullOrEmpty(filter) 
+                            || (!string.IsNullOrEmpty(o.Description) && o.Description.ToLower().Contains(filter.ToLower())))
+                            .ToList();
             return Json(new {
-                data = ObjectsRepository.ObjectForSales
+                data = objectForSales
                     .Skip((page.Value - 1) * _pageSize)
                     .Take(_pageSize),
-                total = ObjectsRepository.ObjectForSales. Count
+                total = objectForSales.Count
             });
+        }
+
+        [HttpPost]
+        public ActionResult ObjectsListWithFilter(string filterValue)
+        {
+            filterValue = filterValue ?? "";
+            return Json(ObjectsRepository.ObjectForSales);
         }
     }
 }

@@ -232,6 +232,13 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\images\arrow-left.png" />
     <Content Include="Content\images\arrow-right.png" />
+    <Content Include="Content\images\background.jpg" />
+    <Content Include="Content\images\background.png" />
+    <Content Include="Content\images\background0.jpg" />
+    <Content Include="Content\images\background0.png" />
+    <Content Include="Content\images\background1.jpg" />
+    <Content Include="Content\images\background1.png" />
+    <Content Include="Content\images\background3.png" />
     <Content Include="Content\images\bg_main_decor.jpg" />
     <Content Include="Content\images\House8.png" />
     <Content Include="Content\images\Strip.jpg" />
